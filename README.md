@@ -1,7 +1,6 @@
 # EazyStore – Entity & Relationship Documentation
 
-![Screenshot (2)](https://github.com/user-attachments/assets/5470e8e1-c60f-4af7-8004-912450786315)
-
+![Screenshot (2)](https://github.com/user-attachments/assets/1b815c11-e294-427c-b6fe-6baa41a41873)
 
 > **Domain**: E‑commerce platform named as eazyStickers that sells *fizzy stickers* with Stripe‑based payments and role‑based Spring‑Security access.
 > **Tech stack**: Spring Boot / Spring Data JPA, MySQL, JWT Auth, REST APIs, Redux Toolkit Front‑end, Tailwind CSS.
