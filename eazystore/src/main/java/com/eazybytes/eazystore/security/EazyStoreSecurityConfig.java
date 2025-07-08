@@ -44,7 +44,7 @@ public class EazyStoreSecurityConfig {
         return http.csrf(csrfConfig -> csrfConfig.
                         csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
-                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
+                // .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> {
                             publicPaths.forEach(path ->
                                     requests.requestMatchers(path).permitAll());
