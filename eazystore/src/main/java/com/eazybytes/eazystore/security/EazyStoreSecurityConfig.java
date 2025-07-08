@@ -44,7 +44,7 @@ public class EazyStoreSecurityConfig {
         return http.csrf(csrfConfig -> csrfConfig.
                         csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
-                // .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((requests) -> {
                             publicPaths.forEach(path ->
                                     requests.requestMatchers(path).permitAll());
@@ -81,10 +81,15 @@ public class EazyStoreSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("https://eazystickersecomm-main-1ab8d8b.kuberns.cloud"));
-        config.setAllowedMethods(Collections.singletonList("*"));
-        config.setAllowedHeaders(Collections.singletonList("*"));
+        // Using setAllowedOriginPatterns is a more flexible and recommended approach
+        // for CORS configurations, especially when allowCredentials is true.
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowCredentials(true);
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        // Since you are using JWTs, you must expose the Authorization header
+        // so that the frontend can read it if you send a new/refreshed token in the response.
+        config.setExposedHeaders(Arrays.asList("Authorization"));
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
