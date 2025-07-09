@@ -24,6 +24,8 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
+
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,7 @@ public class EazyStoreSecurityConfig {
                             publicPaths.forEach(path ->
                                     requests.requestMatchers(path).permitAll());
                             // Restrict specific paths based on roles
+                            requests.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             requests.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
                             requests.requestMatchers("/eazystore/actuator/**").hasRole("OPS_ENG");
                             requests.requestMatchers("/swagger-ui.html", "/swagger-ui/**",
@@ -83,7 +86,8 @@ public class EazyStoreSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // Allow requests from any origin
-        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        // config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowCredentials(true); // Allow credentials (cookies, authorization tokens)
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept")); // Allow necessary headers
