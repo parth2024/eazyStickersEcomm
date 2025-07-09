@@ -44,22 +44,23 @@ public class EazyStoreSecurityConfig {
         return http.csrf(csrfConfig -> csrfConfig.
                         csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
-                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource())) // Apply global CORS configuration
                 .authorizeHttpRequests((requests) -> {
+                            // Open public paths without authentication
                             publicPaths.forEach(path ->
                                     requests.requestMatchers(path).permitAll());
+                            // Restrict specific paths based on roles
                             requests.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
                             requests.requestMatchers("/eazystore/actuator/**").hasRole("OPS_ENG");
                             requests.requestMatchers("/swagger-ui.html", "/swagger-ui/**",
                             "/v3/api-docs/**").hasAnyRole("DEV_ENG","QA_ENG");
-                            requests.anyRequest().hasAnyRole("USER", "ADMIN");
+                            requests.anyRequest().hasAnyRole("USER", "ADMIN"); // Default access for other requests
                         }
                 )
                 .addFilterBefore(new JWTTokenValidatorFilter(publicPaths), BasicAuthenticationFilter.class)
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults()).build();
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -81,17 +82,15 @@ public class EazyStoreSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Using setAllowedOriginPatterns is a more flexible and recommended approach
-        // for CORS configurations, especially when allowCredentials is true.
+        // Allow requests from any origin
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        config.setAllowCredentials(true);
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        // Since you are using JWTs, you must expose the Authorization header
-        // so that the frontend can read it if you send a new/refreshed token in the response.
-        config.setExposedHeaders(Arrays.asList("Authorization"));
-        config.setMaxAge(3600L);
+        config.setAllowCredentials(true); // Allow credentials (cookies, authorization tokens)
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept")); // Allow necessary headers
+        config.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header for client access
+        config.setMaxAge(3600L); // Caching pre-flight requests for 1 hour
 
+        // Apply the CORS configuration to all URLs
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
