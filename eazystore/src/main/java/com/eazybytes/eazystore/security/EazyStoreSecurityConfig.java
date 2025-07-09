@@ -87,7 +87,7 @@ public class EazyStoreSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         // Allow requests from any origin
         // config.setAllowedOriginPatterns(Collections.singletonList("*"));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "*"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://eazystickersecomm-main-8e3e201.kuberns.cloud/"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowCredentials(true); // Allow credentials (cookies, authorization tokens)
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept")); // Allow necessary headers
