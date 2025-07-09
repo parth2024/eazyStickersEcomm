@@ -90,7 +90,7 @@ public class EazyStoreSecurityConfig {
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://eazystickersecomm-main-8e3e201.kuberns.cloud"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowCredentials(true); // Allow credentials (cookies, authorization tokens)
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept")); // Allow necessary headers
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-XSRF-TOKEN")); // Allow necessary headers
         config.setExposedHeaders(Arrays.asList("Authorization")); // Expose Authorization header for client access
         config.setMaxAge(3600L); // Caching pre-flight requests for 1 hour
 
