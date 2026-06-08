@@ -2,6 +2,7 @@ package com.eazybytes.eazystore.security;
 
 import com.eazybytes.eazystore.filter.JWTTokenValidatorFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,9 +27,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.http.HttpMethod;
 
-
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -39,6 +39,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class EazyStoreSecurityConfig {
 
     private final List<String> publicPaths;
+
+    @Value("${DEPLOYMENT_HOSTNAME:}")
+    private String deploymentHostname;
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
@@ -85,9 +88,18 @@ public class EazyStoreSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Allow requests from any origin
-        // config.setAllowedOriginPatterns(Collections.singletonList("*"));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://eazystickersecomm-main-8e3e201.kuberns.cloud"));
+
+        List<String> allowedOrigins = new ArrayList<>(Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://eazystickersecomm-main-8e3e201.kuberns.cloud"
+        ));
+        if (deploymentHostname != null && !deploymentHostname.isEmpty()) {
+            allowedOrigins.add("https://" + deploymentHostname);
+            allowedOrigins.add("http://" + deploymentHostname);
+        }
+
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowCredentials(true); // Allow credentials (cookies, authorization tokens)
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-XSRF-TOKEN")); // Allow necessary headers
