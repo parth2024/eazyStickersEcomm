@@ -40,7 +40,7 @@ public class EazyStoreSecurityConfig {
 
     private final List<String> publicPaths;
 
-    @Value("${DEPLOYMENT_HOSTNAME:}")
+    @Value("${app.deployment.hostname:}")
     private String deploymentHostname;
 
     @Bean
